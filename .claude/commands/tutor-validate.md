@@ -1,5 +1,5 @@
 ---
-description: Шаг #5 fastapi-tutor — проверяет целостность книги (только чтение, идемпотентно)
+description: Шаг #6 code-tutor — проверяет целостность книги, стек-aware (только чтение, идемпотентно)
 ---
 
 ## Использование
@@ -23,32 +23,27 @@ description: Шаг #5 fastapi-tutor — проверяет целостност
 ## Инструкция для LLM
 
 ### Этап 1: Загрузка чек-листа
-Прочитай `.claude/skills/book-architect/resources/book_validation.md` — критерии проверки.
+Прочитай `.claude/skills/book-architect/resources/book_validation.md` — критерии проверки (разделы 1–10).
 Сверь термины/формат с `.claude/skills/book-architect/resources/naming_conventions.md`.
 
 ### Этап 2: Сбор данных (только чтение)
 1. Прочитай `book/outline.md`, распарси шаги регэкспом `^- \[( |x)\] (\S+\.md) — (.+)$`.
 2. Получи фактический список файлов в `book/**`.
-3. Прочитай `requirements.md` (Файл №2) для проверки покрытия требований.
+3. Прочитай `requirements.md` (Файл №2) — для покрытия требований.
+4. Прочитай `stack_decision.md` (Файл №3) — тип проекта, стек(и), профиль(и), путь к паку и контракту.
+5. Прочитай индекс(ы) Knowledge Pack (`book/_knowledge/<tech>/00_index.md`) и контракт(ы) (`book/contracts/*.yaml`), если есть.
 
 ### Этап 3: Проверки
-Для каждого пункта чек-листа `book_validation.md` собери расхождения с типами:
-- `missing` — шаг из плана отсутствует на диске или не отмечен `[x]`;
-- `orphan` — файл в `book/**` есть, но его нет в плане;
-- `broken-link` — относительная ссылка в шаге ведёт в несуществующий файл;
-- `numbering` — пропуск/дубль в нумерации глав/секций (с `chapter_0` отсчёт с 0 допустим);
-- `uncovered-requirement` — пункт Файла №2 не покрыт ни одной секцией;
-- `missing-branch-step` / `missing-mr-step` — секция-фича без `start_feature_branch` / `commit_push_open_mr`;
-- `placeholder` — в шаге есть `...` / `(фрагмент)` / «по образцу» без ссылки на полный пример;
-- `unexplained-code` — нетривиальный блок кода без следующего за ним раздела «Разбор кода»;
-- `orphan-symbol` — в коде шага используется имя, не определённое/не собранное в этом же шаге;
-- `missing-recap` — глава без завершающего шага `recap_and_state`;
-- `deps-drift` — зависимость из шагов (`pip install`/правки `requirements.txt`) отсутствует в финальном снимке `requirements.txt` (recap);
-- `step-order` — файл-шаг без префикса `<KK>_`, либо префиксы в секции с пропуском/дублем (не сквозные с `01`);
-- `step-count-mismatch` — заголовок «Шаг N из M» не совпадает с префиксом файла (`N`) и числом шагов в секции (`M`).
+Для каждого пункта чек-листа `book_validation.md` (разделы 1–10) собери расхождения. Типы — из таблицы чек-листа, включая стек-aware:
+- `missing` / `orphan` / `broken-link` / `numbering` / `uncovered-requirement`;
+- `missing-branch-step` / `missing-mr-step` / `placeholder` / `unexplained-code` / `orphan-symbol`;
+- `missing-recap` / `missing-overview` / `deps-drift` / `step-order` / `step-count-mismatch`;
+- `pack-not-frozen` / `profile-incomplete` / `profile-layer-mismatch` / `part-structure` / `contract-drift` / `pack-drift`.
+
+> Если есть контракт — можно прогнать линтер OpenAPI через Bash (redocly → openapi_spec_validator → yaml) для объективной проверки его валидности; расхождения «код шага vs контракт» проверяются чтением.
 
 ### Этап 4: Отчёт
 1. Выведи таблицу расхождений: `Тип | Путь | Детали`.
 2. Вердикт: **PASS** (расхождений нет) или **FAIL** (есть).
 3. Не модифицируй файлы книги (валидатор только читает).
-4. При FAIL — подскажи: исправить план `/tutor-plan` или дописать `/tutor-write`.
+4. При FAIL — подскажи: исправить стек/пак `/tutor-stack`, план `/tutor-plan` или дописать `/tutor-write`.
