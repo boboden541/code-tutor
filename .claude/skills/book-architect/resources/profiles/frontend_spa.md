@@ -3,16 +3,18 @@
 > Профиль для клиентских одностраничных приложений (SPA). Подходит React, Vue, Svelte, Angular, SolidJS и аналогам. Конкретные имена файлов/библиотек (роутер, стор, http-клиент) берутся из Stack Knowledge Pack (`book/_knowledge/<frontend_tech>/`), структура — отсюда.
 
 - **track:** `frontend`
+- **styling:** `tokens_css_modules` (по умолчанию: дизайн-токены в CSS-переменных + CSS Modules, без новых зависимостей; Tailwind/UI-кит — только если пак их пинит и build-smoke gate зелёный).
+- **design_spec_ref:** `design_spec.md` (Файл №4 от `/tutor-design`) — источник экранов, форм, состояний и навигации.
 - **state_snapshot_file:** `package.json` (+ lock-файл).
 - **tooling:** пакетный менеджер (`npm`/`pnpm`/`yarn`) + сборщик/dev-сервер (`vite`/аналог из пака).
 - **test_runner:** тест-раннер стека (`vitest`/`jest`) + библиотека тестирования компонентов (Testing Library / аналог).
-- **build:** сборка статики (`vite build` → `dist/`).
-- **deploy_model:** статика за Nginx/CDN, либо контейнер с тем же reverse-proxy, что и бэкенд.
+- **build:** сборка статики через **npm-скрипт** (`npm run build` → `tsc -b` + `vite build` → `dist/`); typecheck — частью скрипта, **не** голым `npx tsc` (тянет посторонний пакет при отсутствии локального бинаря).
+- **deploy_model:** статика за Nginx; для fullstack — сервис `web` (nginx со статикой) в **общем корневом `docker-compose.yml`**, проксирует `/api/` на сервис `api`, поднимается одной командой вместе с бэком и БД.
 - **mental_model_ref:** `data_flow_overview` — как данные текут от API-клиента через состояние к компонентам и как идёт рендер/реактивность.
 
 ## Слои одной фичи (порядок шагов первой фичи)
 
-`api_client (типы + вызовы по контракту) → store/state (состояние фичи) → hooks/composables (логика доступа к состоянию) → components (UI) → test`
+`api_client (типы + вызовы по контракту) → store/state (состояние фичи) → hooks/composables (логика доступа к состоянию) → components (UI) → styles (токены + CSS Modules) → test`
 
 | Слой | Ответственность | Чего НЕ делает |
 |------|------------------|----------------|
@@ -27,10 +29,11 @@
 | # | Глава | Результат |
 |---|-------|-----------|
 | 0 | prerequisites *(если junior/чистая машина)* | окружение готово (Node, git, SSH) |
-| 1 | starting_project | репозиторий, scaffold (Vite), первый экран, dev-сервер поднимается, первый тест |
-| 2 | foundation | роутинг, layout, базовый стиль, http-клиент и работа с контрактом/типами |
-| 3.. | features (по числу экранов/сущностей) | рабочие экраны, потребляющие API по контракту, с тестами |
-| N | delivery | CI (lint+test+build), сборка статики, деплой, smoke-тест в браузере |
+| 1 | starting_project | репозиторий, scaffold (Vite), кастомизация `index.html` (`<title>`/`lang`/meta), первый экран, dev-сервер, первый тест |
+| 2 | design_system | `tokens.css` (палитра/типографика/spacing из `design_spec.md`) + базовые компоненты (Button/Input/Card/StatusBadge/EmptyState/ErrorState/…) |
+| 3 | app_shell | `app_shell_and_routing` (Layout, Nav, роутер со всеми маршрутами из `design_spec`), `protected_route` (гейтинг по роли), `data_flow_overview` |
+| 4.. | features (по **экранам из `design_spec.md`**) | каждый экран = ≥1 секция: формы+валидация, парсинг данных, состояния loading/empty/error, навигация/переходы, потребление API; SEO-meta на публичных экранах |
+| N | delivery | CI (lint+test+`npm run build`), Dockerfile (nginx) + сервис `web` в общем compose, деплой, README проекта, smoke-тест в браузере |
 
 ## Контракт — источник правды
 
@@ -42,3 +45,6 @@
 2. Бизнес-форма данных не дублируется руками — берётся из типов контракта.
 3. Состояние фичи живёт в store/state, а не размазано по компонентам.
 4. Тест проверяет не только happy-path, но и состояния загрузки/ошибки/пустоты.
+5. Экран реализует **все** состояния (loading/empty/error) и переходы из `design_spec.md`; нет белых/заглушечных экранов.
+6. Стиль — только через токены дизайн-системы (`var(--…)`/CSS Modules), без хардкода цветов/отступов в каждом файле.
+7. Каждый навигационный переход из `design_spec` реализован ссылкой/редиректом; каждая мутация реально вызывает эндпоинт контракта.

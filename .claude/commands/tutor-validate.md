@@ -1,5 +1,5 @@
 ---
-description: Шаг #6 code-tutor — проверяет целостность книги, стек-aware (только чтение, идемпотентно)
+description: Шаг #7 code-tutor — проверяет целостность книги, стек-aware + UI/design-aware (только чтение, идемпотентно)
 ---
 
 ## Использование
@@ -38,7 +38,11 @@ description: Шаг #6 code-tutor — проверяет целостность 
 - `missing` / `orphan` / `broken-link` / `numbering` / `uncovered-requirement`;
 - `missing-branch-step` / `missing-mr-step` / `placeholder` / `unexplained-code` / `orphan-symbol`;
 - `missing-recap` / `missing-overview` / `deps-drift` / `step-order` / `step-count-mismatch`;
-- `pack-not-frozen` / `profile-incomplete` / `profile-layer-mismatch` / `part-structure` / `contract-drift` / `pack-drift`.
+- `pack-not-frozen` / `profile-incomplete` / `profile-layer-mismatch` / `part-structure` / `contract-drift` / `pack-drift`;
+- `no-single-compose` / `manual-migration` / `missing-prod-smoke` / `missing-readme` (доставка «до прода»);
+- `design-spec-missing` / `missing-screen` / `missing-app-shell` / `unwired-nav` / `unstyled-screen` / `design-token-drift` / `endpoint-unconsumed` (UI/дизайн, §11 — только если есть фронт-трек и Файл №4).
+
+> `missing-branch-step`/`missing-mr-step` проверяй в **каждой** части (для fullstack — и backend, и frontend). `placeholder`: `...` как валидный синтаксис языка (тело `Protocol`/заглушки) — **не** дефект.
 
 > Если есть контракт — можно прогнать линтер OpenAPI через Bash (redocly → openapi_spec_validator → yaml) для объективной проверки его валидности; расхождения «код шага vs контракт» проверяются чтением.
 

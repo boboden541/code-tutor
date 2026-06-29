@@ -13,6 +13,7 @@
 | Файл №2 / requirements | `requirements.md` | `/tutor-requirements` | Опросник по 4 категориям требований (стек-агностично) |
 | Файл №3 / stack decision | `stack_decision.md` | `/tutor-stack` | Утверждённый стек + обоснование + резолв Architecture Profile(ей) |
 | API-контракт / contract | `book/contracts/<domain>.yaml` | `/tutor-stack` | OpenAPI 3.0.3 — шов между фронтом и бэком (для fullstack/backend) |
+| Файл №4 / design spec | `design_spec.md` | `/tutor-design` | Спецификация экранов + дизайн-система (для frontend/fullstack); источник UI для плана и записи |
 | Knowledge Pack / база знаний стека | `book/_knowledge/<tech>/*.md` | `/tutor-stack` | Замороженная база знаний под выбранные технологии (единый источник истины для записи) |
 | План книги / outline | `book/outline.md` | `/tutor-plan` | Машиночитаемый план книги с чек-боксами |
 | Книга / book | `book/` | `/tutor-write` | Дерево частей/глав/секций/шагов |
@@ -92,7 +93,7 @@ book/
 4. Имена файлов-шагов уникальны в пределах своей секции.
 5. **«Шаг N из M в секции»** в заголовке файла — НЕ пишется вручную: `N` = число из префикса `<KK>`, `M` = количество шагов в секции. Совпадение проверяется валидатором.
 6. Все ссылки между файлами книги — **относительные** от корня проекта (`book/...`). Абсолютные пути запрещены.
-7. **Служебные шаги** (не привязаны к слою, префикс `<KK>_` обязателен): `how_we_work_git_flow`, `request_flow_overview`, `recap_and_state`, `start_feature_branch`, `commit_push_open_mr`, `setup_environment`, `define_api_contract`, `wire_end_to_end`.
+7. **Служебные шаги** (не привязаны к слою, префикс `<KK>_` обязателен): `how_we_work_git_flow`, `request_flow_overview`, `data_flow_overview`, `recap_and_state`, `start_feature_branch`, `commit_push_open_mr`, `setup_environment`, `define_api_contract`, `wire_end_to_end`, `design_system`, `app_shell_and_routing`, `protected_route`.
 
 ## 5. Формат строки `outline.md` (контракт для `/tutor-write`)
 
@@ -117,7 +118,8 @@ book/
 | Architecture Profile | Декларативный профиль на технологию: порядок слоёв фичи, скелет глав, файл-снимок состояния, тест-раннер, билд-тул, модель деплоя (см. `profiles/_profile_schema.md`) |
 | Stack Knowledge Pack | База знаний под выбранный стек (`book/_knowledge/<tech>/`), собранная `/tutor-stack` и **замороженная**: при записи книги — единственный источник истины, как раньше были `book-author/resources/*.md` под FastAPI |
 | Файл-снимок состояния | Манифест зависимостей трека: `requirements.txt`/`pyproject.toml` (Python), `package.json` (Node/JS), `go.mod` (Go), `pom.xml`/`build.gradle` (Java). Приводится целиком в каждом `recap_and_state` |
-| Слой фичи | Шаг по слою архитектуры; набор и порядок слоёв задаёт Architecture Profile, а не хардкод (бэк: `schema→domain→repo→usecase→router→test`; фронт-SPA: `api_client→store→hooks→components→test`) |
+| Слой фичи | Шаг по слою архитектуры; набор и порядок слоёв задаёт Architecture Profile, а не хардкод (бэк: `schema→domain→repo→usecase→router→test`; фронт-SPA: `api_client→store→hooks→components→styles→test`) |
+| Файл №4 / design spec | Спецификация экранов (маршрут, роль, вызовы API, формы+валидация, парсинг, состояния, навигация) + дизайн-система (токены/компоненты/тон). Создаётся `/tutor-design`, потребляется `/tutor-plan` и `/tutor-write` для frontend/fullstack |
 
 ## 7. Запрещено
 

@@ -6,8 +6,8 @@
 - **state_snapshot_file:** манифест зависимостей стека — `requirements.txt`/`pyproject.toml` (Python), `package.json` (Node), `go.mod` (Go), `pom.xml`/`build.gradle` (Java).
 - **tooling:** пакетный менеджер + запуск dev-сервера стека (из пака).
 - **test_runner:** тест-раннер стека (pytest / jest / go test / JUnit — из пака).
-- **build:** Docker-образ приложения.
-- **deploy_model:** контейнер за reverse-proxy (Nginx) + HTTPS на VPS, либо PaaS.
+- **build:** Docker-образ приложения с `entrypoint.sh`, который **сам применяет миграции** (`alembic upgrade head`/аналог) и затем стартует сервер — контейнер поднимается рабочим без ручных шагов.
+- **deploy_model:** контейнер за reverse-proxy (Nginx) + HTTPS на VPS, либо PaaS. Для fullstack — общий корневой `docker-compose.yml` (db+api+web), поднимаемый одной командой; миграции — в entrypoint, не отдельным шагом деплоя.
 - **mental_model_ref:** `request_flow_overview` — как HTTP-запрос проходит слои.
 
 ## Слои одной фичи (порядок шагов первой фичи)
@@ -35,7 +35,7 @@
 | 1 | starting_project | репозиторий, структура слоёв, первый эндпоинт (`/health`), Docker, первый тест |
 | 2 | данные/безопасность *(если есть БД/auth)* | подключение БД, миграции, аутентификация |
 | 3.. | features (по числу доменных сущностей) | рабочее API сущностей с тестами |
-| N | delivery | CI, секреты, прод-сервер, деплой, smoke-тест |
+| N | delivery | CI, секреты, Dockerfile+entrypoint (авто-миграции), прод-сервер, деплой, README проекта, smoke-тест |
 
 ## Контракт (для fullstack/наличия фронта)
 
