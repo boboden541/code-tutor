@@ -23,19 +23,17 @@
 ```markdown
 ### screen: buyer_order_detail
 - name: Заказ (покупатель)
-- purpose: Покупатель видит статус заказа и подтверждает/отклоняет фото перед доставкой.
+- purpose: Покупатель видит статус заказа и подтверждает получение.
 - route: /orders/:id
 - role_gating: buyer (owner: buyer_id == текущий)
 - api_calls:
   - GET /orders/{id}            (чтение деталей)
   - POST /orders/{id}/pay        (если status=created)
   - POST /orders/{id}/cancel     (если status in [created, paid])
-  - POST /orders/{id}/approve-photo (если status=photo_review)
-  - POST /orders/{id}/reject-photo  (если status=photo_review)
+  - POST /orders/{id}/confirm    (если status=shipped)
 - input_forms: нет (только действия-кнопки)
 - data_displayed:
-  - product title, recipient_phone, card_text, delivery_date (дата), status (StatusBadge), total (валюта ₽)
-  - ready_photo_url → превью изображения (только при status=photo_review)
+  - item title, quantity, delivery_date (дата), status (StatusBadge), total (валюта ₽)
 - states:
   - loading: Spinner на месте карточки
   - error: ErrorState «Не удалось загрузить заказ» + кнопка «Повторить»
@@ -46,7 +44,7 @@
 - navigation:
   - входящие: из my_orders (клик по карточке)
   - исходящие: «Назад к заказам» → /orders
-  - после approve-photo: статус → assembled (остаёмся на экране); после cancel → /orders
+  - после confirm: статус → delivered (остаёмся на экране); после cancel → /orders
 - components_used: Layout, Card, StatusBadge, Button, Spinner, ErrorState
 ```
 

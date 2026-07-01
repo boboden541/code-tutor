@@ -7,8 +7,8 @@
 # Дизайн-спецификация: <Домен>
 
 ## 1. Суть и эстетика
-- **Предмет / аудитория / задача:** <напр.> маркетплейс подарков; покупатели и продавцы-флористы/кондитеры; задача — выбрать и заказать подарок с гарантией «фото до доставки».
-- **Визуальный язык (выведен из сути):** тёплая праздничная палитра, **сильная шрифтовая пара**, продающие блоки (рейтинги/отзывы/бейджи), акцент доверия вокруг фотоконтроля. (Источник дисциплины: навык `frontend-design` + `resources/art_direction.md`.)
+- **Предмет / аудитория / задача:** <напр.> маркетплейс товаров; покупатели и продавцы-магазины; задача — выбрать и заказать товар с прозрачным статусом доставки.
+- **Визуальный язык (выведен из сути):** тёплая праздничная палитра, **сильная шрифтовая пара**, продающие блоки (рейтинги/отзывы/бейджи), акцент доверия вокруг прозрачности заказа. (Источник дисциплины: навык `frontend-design` + `resources/art_direction.md`.)
 - **Способ стилизации:** дизайн-токены (CSS-переменные) + CSS Modules, без новых зависимостей.
 - **Прототипы:** три направления в Claude Design проекте «<Domain> UI» | либо Artifact (3 ссылки/переключатель) | либо `PROTOTYPE: spec-only (<причина>)`.
 
@@ -17,7 +17,7 @@
 
 | # | Ярлык | Позиционирование (на кого / эмоция) | Шрифтовая пара | Композиция | Файл-прототип |
 |---|-------|--------------------------------------|----------------|------------|----------------|
-| 1 | Тёплый ремесленный | для дарящих «от души»; уют и доверие | Fraunces + Plus Jakarta Sans | асимметричный editorial | `<domain>_dir1_warm.html` |
+| 1 | Тёплый ремесленный | для ценящих ручную работу; уют и доверие | Fraunces + Plus Jakarta Sans | асимметричный editorial | `<domain>_dir1_warm.html` |
 | 2 | Современный продуктовый | занятым; быстро и уверенно | Space Grotesk + Inter | bento-сетка | `<domain>_dir2_modern.html` |
 | 3 | Смелый журнальный | ценящим вкус; «вау» | Archivo Expanded + Manrope | split-screen + overlap | `<domain>_dir3_editorial.html` |
 
@@ -40,24 +40,24 @@ Button(primary/secondary/danger; default/**hover**/active/**focus-visible**/disa
 ### Тон
 Тёплые человеческие тексты; ошибки: 401→«Войдите снова», 403→«Недостаточно прав», 409→«Действие недоступно в текущем статусе».
 ### Статусы → бейдж
-created→muted, paid→accent, accepted→warning, photo_review→accent, assembled→success, delivered→success, cancelled→danger.
+created→muted, paid→accent, accepted→warning, shipped→accent, delivered→success, cancelled→danger.
 
 ## 3. Матрица покрытия «экран × эндпоинт»
 | Экран | Чтения | Действия | Эндпоинты покрыты |
 |-------|--------|----------|-------------------|
 | catalog | GET /products | — | /products |
-| buyer_order_detail | GET /orders/{id} | pay, cancel, approve-photo, reject-photo | …/pay …/cancel …/approve-photo …/reject-photo |
-| seller_order_detail | GET /orders/{id} | accept, photo, deliver | …/accept …/photo …/deliver |
+| buyer_order_detail | GET /orders/{id} | pay, cancel, confirm | …/pay …/cancel …/confirm |
+| seller_order_detail | GET /orders/{id} | accept, ship | …/accept …/ship |
 | … | … | … | … |
 > Проверка: каждая операция контракта стоит ≥1 раз (нет `endpoint-unconsumed`).
 
 ## 4. Экраны (каждый по schema)
 
 ### screen: catalog
-- name: Каталог; purpose: выбрать подарок.
+- name: Каталог; purpose: выбрать товар.
 - route: /; role_gating: guest/buyer
 - api_calls: GET /products (фильтр city, category)
-- input_forms: фильтр — city (text, optional), category (select: flowers|cake|craft, optional)
+- input_forms: фильтр — city (text, optional), category (select — категории каталога, optional)
 - data_displayed: список ProductRead → ProductCard (title, Price(price ₽), category, photo_url); shop title
 - states: loading→грид Spinner; empty→EmptyState «Ничего не найдено»; error→ErrorState+Повторить
 - navigation: вход — корень; исход — клик карточки → /products/:id; Nav → вход/регистрация
@@ -67,13 +67,13 @@ created→muted, paid→accent, accepted→warning, photo_review→accent, assem
 - (см. пример в `resources/screen_spec_schema.md` — полностью заполненный)
 
 ### screen: seller_order_detail
-- name: Заказ (продавец); purpose: принять, загрузить фото, отметить доставленным.
+- name: Заказ (продавец); purpose: принять заказ и отметить отправленным.
 - route: /seller/orders/:id; role_gating: seller (owner: shop)
-- api_calls: GET /orders/{id}; POST …/accept (paid); POST …/photo {ready_photo_url} (accepted); POST …/deliver (assembled)
-- input_forms: фото — ready_photo_url (text/URL, required) — это URL, не файл
+- api_calls: GET /orders/{id}; POST …/accept (paid); POST …/ship {tracking_number} (accepted)
+- input_forms: отправка — tracking_number (text, required, minLength 6) — трек-номер посылки
 - data_displayed: product, buyer phone, delivery_date, status(StatusBadge), total(Price)
 - states: loading/error как обычно; mutation pending→кнопка disabled+Spinner; 409→«Действие недоступно в текущем статусе»
-- navigation: вход из incoming_orders; «Назад» → /seller/orders; после deliver — статус delivered
+- navigation: вход из incoming_orders; «Назад» → /seller/orders; после ship — статус shipped
 - components_used: Layout, Card, StatusBadge, FormField, Input, Button, Spinner, ErrorState
 
 ## 5. Примечания

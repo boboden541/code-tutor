@@ -23,7 +23,7 @@ description: Шаг #7 code-tutor — проверяет целостность 
 ## Инструкция для LLM
 
 ### Этап 1: Загрузка чек-листа
-Прочитай `.claude/skills/book-architect/resources/book_validation.md` — критерии проверки (разделы 1–10).
+Прочитай `.claude/skills/book-architect/resources/book_validation.md` — критерии проверки (разделы 1–11).
 Сверь термины/формат с `.claude/skills/book-architect/resources/naming_conventions.md`.
 
 ### Этап 2: Сбор данных (только чтение)
