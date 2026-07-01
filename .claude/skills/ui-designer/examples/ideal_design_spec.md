@@ -8,9 +8,20 @@
 
 ## 1. Суть и эстетика
 - **Предмет / аудитория / задача:** <напр.> маркетплейс подарков; покупатели и продавцы-флористы/кондитеры; задача — выбрать и заказать подарок с гарантией «фото до доставки».
-- **Визуальный язык (выведен из сути):** тёплая праздничная палитра, дружелюбная типографика, акцент доверия вокруг фотоконтроля. (Источник дисциплины: навык `frontend-design`.)
+- **Визуальный язык (выведен из сути):** тёплая праздничная палитра, **сильная шрифтовая пара**, продающие блоки (рейтинги/отзывы/бейджи), акцент доверия вокруг фотоконтроля. (Источник дисциплины: навык `frontend-design` + `resources/art_direction.md`.)
 - **Способ стилизации:** дизайн-токены (CSS-переменные) + CSS Modules, без новых зависимостей.
-- **Прототип:** Claude Design проект «<Domain> UI» (утверждён) | либо Artifact <ссылка> | либо `PROTOTYPE: spec-only (<причина>)`.
+- **Прототипы:** три направления в Claude Design проекте «<Domain> UI» | либо Artifact (3 ссылки/переключатель) | либо `PROTOTYPE: spec-only (<причина>)`.
+
+## 1a. Визуальные направления (3) и выбранное
+> Три **системно разных** направления (≥3 осей различия — типографика/композиция/эмоция, не только цвет), по `art_direction.md`. Пользователь выбрал одно — его дизайн-система ниже.
+
+| # | Ярлык | Позиционирование (на кого / эмоция) | Шрифтовая пара | Композиция | Файл-прототип |
+|---|-------|--------------------------------------|----------------|------------|----------------|
+| 1 | Тёплый ремесленный | для дарящих «от души»; уют и доверие | Fraunces + Plus Jakarta Sans | асимметричный editorial | `<domain>_dir1_warm.html` |
+| 2 | Современный продуктовый | занятым; быстро и уверенно | Space Grotesk + Inter | bento-сетка | `<domain>_dir2_modern.html` |
+| 3 | Смелый журнальный | ценящим вкус; «вау» | Archivo Expanded + Manrope | split-screen + overlap | `<domain>_dir3_editorial.html` |
+
+**Выбрано: №1 «Тёплый ремесленный»** (решение пользователя). Дизайн-система ниже описывает именно его.
 
 ## 2. Дизайн-система
 ### Токены
@@ -18,13 +29,14 @@
 --color-bg:#fff7f2; --color-surface:#fff; --color-text:#2b2024; --color-muted:#8a7a72;
 --color-accent:#ff6b6b; --color-accent-ink:#fff; --color-border:#f0e0d8;
 --color-success:#2e9e6b; --color-warning:#d9a441; --color-danger:#d64550;
---font-sans:system-ui,sans-serif; --font-display:Georgia,serif;
---fs-1:2rem; --fs-2:1.5rem; --fs-3:1.125rem; --fs-body:1rem; --fs-sm:.875rem;
+/* шрифтовая пара (Google Fonts): <link href="…Fraunces…Plus+Jakarta+Sans…"> */
+--font-display:"Fraunces",Georgia,serif; --font-text:"Plus Jakarta Sans",system-ui,sans-serif;
+--fs-1:2.6rem; --fs-2:1.85rem; --fs-3:1.3rem; --fs-body:1rem; --fs-sm:.875rem;  /* модульная шкала ×1.3 */
 --space-1:4px;--space-2:8px;--space-3:12px;--space-4:16px;--space-6:24px;--space-8:32px;
---radius:14px;--radius-sm:8px;--shadow:0 2px 8px #0001;--shadow-lg:0 8px 24px #0002;
+--radius:14px;--radius-sm:8px;--shadow:0 8px 24px -10px rgba(255,107,107,.25);--shadow-lg:0 18px 50px -16px rgba(43,32,36,.28);
 ```
-### Компоненты
-Button(primary/secondary/danger), Input, Select, Textarea, FormField(label+error), Card, StatusBadge(по статусу), Price, Spinner, EmptyState, ErrorState, Layout, Nav(роле-зависимая), ProtectedRoute.
+### Компоненты (с состояниями)
+Button(primary/secondary/danger; default/**hover**/active/**focus-visible**/disabled/pending; `cursor:pointer`), Input, Select, Textarea, FormField(label+error+focus/invalid), Card, StatusBadge(по статусу), Price, **RatingStars**, **ReviewCard**, **TrustBadge**, Spinner, EmptyState, ErrorState, Layout, Nav(роле-зависимая), ProtectedRoute.
 ### Тон
 Тёплые человеческие тексты; ошибки: 401→«Войдите снова», 403→«Недостаточно прав», 409→«Действие недоступно в текущем статусе».
 ### Статусы → бейдж

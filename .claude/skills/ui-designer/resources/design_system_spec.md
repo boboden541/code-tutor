@@ -7,9 +7,9 @@
 | Группа | Токены | Примечание |
 |--------|--------|-----------|
 | Палитра | `--color-bg`, `--color-surface`, `--color-text`, `--color-muted`, `--color-accent`(+`-ink`), `--color-border`, `--color-success/-warning/-danger` | акцент — 1, выведенный из сути; статусные цвета — для StatusBadge |
-| Типографика | `--font-sans`, `--font-display`, шкала `--fs-1..--fs-sm` | display-шрифт для заголовков задаёт характер |
+| Типографика | `--font-display` + `--font-text` (**шрифтовая пара** с реальным контрастом, см. `art_direction.md §B`) + ссылка на шрифты (Google Fonts/`@font-face`); модульная шкала `--fs-1..--fs-sm` (контраст ×1.25–1.333) | display задаёт эмоцию, text — читаемость; «всё 16px» запрещено |
 | Spacing | `--space-1..--space-8` (4–32px) | единая шкала отступов |
-| Форма | `--radius`, `--radius-sm`, `--shadow`, `--shadow-lg` | скругления/тени задают «настроение» |
+| Форма | `--radius`, `--radius-sm`, `--shadow`, `--shadow-lg` | скругления/тени задают «настроение»; тени — мягкие/полупрозрачные/в тон, **не жёсткие чёрные** |
 
 Зафиксируй конкретные значения (hex, px, имена шрифтов), чтобы `book-author` положил их в `tokens.css` без догадок.
 
@@ -17,9 +17,10 @@
 
 Перечисли компоненты с вариантами — это «алфавит», из которого собираются экраны:
 
-- **Действия:** `Button` (варианты: primary / secondary / danger; состояния: default/disabled/pending).
-- **Ввод:** `Input`, `Select`, `Textarea`, `FormField` (label + контрол + текст ошибки).
+- **Действия:** `Button` (варианты: primary / secondary / danger; **обязательные состояния:** default / **hover** / active / **focus-visible** / disabled / pending). Акцентный CTA — визуально доминирует; hover ощутимый, `cursor:pointer`. См. `art_direction.md §C`.
+- **Ввод:** `Input`, `Select`, `Textarea`, `FormField` (label + контрол + текст ошибки; состояние focus/invalid).
 - **Данные:** `Card`, `StatusBadge` (цвет по статусу), `Price` (форматирование валюты), список/грид карточек.
+- **Триггеры доверия (продающий UX):** `RatingStars` (★ + число отзывов), `ReviewCard` (цитата+имя+аватар), `TrustBadge` («Хит продаж» / «Проверенный продавец» / продуктовая гарантия). На мок-данных, честно (не тёмные паттерны).
 - **Состояния:** `Spinner`, `EmptyState` (иконка + текст + CTA), `ErrorState` (текст + «Повторить»).
 - **Каркас:** `Layout` (шапка+контент), `Nav` (роле-зависимые ссылки + вход/выход), `ProtectedRoute` (гейтинг по роли).
 

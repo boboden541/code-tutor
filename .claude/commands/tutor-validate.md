@@ -34,8 +34,9 @@ description: Шаг #7 code-tutor — проверяет целостность 
 5. Прочитай индекс(ы) Knowledge Pack (`book/_knowledge/<tech>/00_index.md`) и контракт(ы) (`book/contracts/*.yaml`), если есть.
 
 ### Этап 3: Проверки
-Для каждого пункта чек-листа `book_validation.md` (разделы 1–10) собери расхождения. Типы — из таблицы чек-листа, включая стек-aware:
+Для каждого пункта чек-листа `book_validation.md` (разделы 1–11) собери расхождения. Типы — из таблицы чек-листа, включая стек-aware:
 - `missing` / `orphan` / `broken-link` / `numbering` / `uncovered-requirement`;
+- `forward-reference` / `build-order` (порядок сборки, §4a: артефакт используется раньше, чем введён; секция-фича размещена раньше своей зависимости);
 - `missing-branch-step` / `missing-mr-step` / `placeholder` / `unexplained-code` / `orphan-symbol`;
 - `missing-recap` / `missing-overview` / `deps-drift` / `step-order` / `step-count-mismatch`;
 - `pack-not-frozen` / `profile-incomplete` / `profile-layer-mismatch` / `part-structure` / `contract-drift` / `pack-drift`;
